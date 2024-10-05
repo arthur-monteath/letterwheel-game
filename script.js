@@ -89,6 +89,18 @@ let letterPressedThisRound = false;
 document.getElementById("numPlayers").addEventListener("change", setupPlayerInputs);
 document.getElementById("startGame").addEventListener("click", startGame);
 
+document.addEventListener("keydown", handleKeyPress);
+
+function handleKeyPress(event) {
+    const pressedKey = event.key.toUpperCase();
+    const letterBox = currentLetterBoxes.find(box => box.dataset.letter === pressedKey);
+
+    // If the pressed key matches a letter box and it hasn't been used
+    if (letterBox && !letterBox.classList.contains("used")) {
+        handleLetterClick(letterBox);
+    }
+}
+
 setupPlayerInputs();
 
 function setupPlayerInputs() {
@@ -206,13 +218,16 @@ function endTurn() {
     updatePlayerIndicator();
 
     // Check if all players have had their turn without pressing any letter
-    if (currentPlayer === 0 && !letterPressedThisRound) {
-        endGame(); // End the game if no letters were pressed
+    if (currentPlayer === 0)
+    {
+        if(!letterPressedThisRound)
+        {
+            endGame();
+        }
+        letterPressedThisRound = false;
     } else {
         startTurn(); // Start the next player's turn
     }
-
-    letterPressedThisRound = false; // Reset the tracker for the next round
 }
 
 // Update the corner gradients to indicate the current player
