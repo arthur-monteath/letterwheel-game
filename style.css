@@ -8,10 +8,20 @@ body {
     background-color: #f0f0f0;
 }
 
+#game {
+    width: 100%;
+    height: 100%;
+}
+
 .wheel-container {
     position: relative;
+    top: 15vh;
     width: 70vh;
     height: 70vh;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center the colors */
 }
 
 #wheel {
@@ -21,7 +31,6 @@ body {
     border-radius: 50%;
     border: 5px solid #000;
     margin: auto;
-
 }
 
 .letter-box {
@@ -37,46 +46,74 @@ body {
     text-align: center;
     line-height: 50px;
     transform-origin: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    user-select: none;
 }
 
 .letter-box.used {
     background-color: #ccc;
     pointer-events: none;
+    transform: rotateX(90deg); /* 3D effect when 'pushed' */
 }
 
-
-#timer {
+#time {
     position: absolute;
-    top: 10px;
+    top: 35%;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 24px;
+    font-size: 5vh;
     font-weight: bold;
 }
 
-#corner-top-left, #corner-top-right, #corner-bottom-left, #corner-bottom-right {
+#colors {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    font-size: 24px;
+    text-align: center;
 }
 
-#corner-top-left {
-    top: 0;
-    left: 0;
+#setup {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
 }
 
-#corner-top-right {
-    top: 0;
-    right: 0;
+.name-input {
+    margin-bottom: 4px;
 }
 
-#corner-bottom-left {
-    bottom: 0;
-    left: 0;
+#startGame {
+    margin-top: 16px;
 }
 
-#corner-bottom-right {
-    bottom: 0;
-    right: 0;
+#numPlayers {
+    margin-bottom: 16px;
+}
+
+#currentPlayer {
+    position: absolute; 
+    top: 50%; left: 50%; 
+    transform: translate(-50%, -60%); 
+    font-size: 5vw; 
+    font-weight: bold;
+}
+
+#resultsText {
+    line-height: 1.5em;
+
+    width: 100%;
+}
+
+#results {
+    display: flex;
+    flex-direction: column;
+
+    width: max(300px, 60vw);
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+#okButton {
+    margin-top: 24px;
 }

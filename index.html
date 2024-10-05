@@ -7,20 +7,29 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
-        <div id="timer">Time Left: <span id="time">5</span>s</div>
+    <div id="setup">
+        <label for="numPlayers">Number of Players: </label>
+        <input type="number" id="numPlayers" min="2" max="10" value="3" /><br/>
 
+        <div id="playerSetup"></div>
+
+        <button id="startGame">Start Game</button>
+    </div>
+
+    <div id="game" style="display: none;">
+        <div id="time"></div>
         <div class="wheel-container">
             <div id="wheel">
-
+                <div id="currentPlayer"></div>
             </div>
-        </div>
-
-        <div id="corner-top-left"></div>
-        <div id="corner-top-right"></div>
-        <div id="corner-bottom-left"></div>
-        <div id="corner-bottom-right"></div>
+        </div>      
     </div>
+
+    <div id="results" style="display: none;">
+        <h2>Game Over!</h2>
+        <div id="resultsText"></div>
+        <button id="okButton">OK</button>
+    </div>    
 
     <script src="script.js"></script>
 </body>

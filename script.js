@@ -1,12 +1,57 @@
+
+
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const wheel = document.getElementById("wheel");
 const timerElement = document.getElementById("time");
 
 let timeLeft = 5;
 let currentPlayer = 0;
-let players = ["#ff0000", "#00ff00", "#0000ff"]; // Colors for players
+let players = []; // Array to store players' names and colors
 let currentLetterBoxes = [];
 let interval = null; // Store the interval globally to manage clearing
+
+// Handle pre-game setup
+document.getElementById("numPlayers").addEventListener("change", setupPlayerInputs);
+document.getElementById("startGame").addEventListener("click", startGame);
+
+setupPlayerInputs();
+
+function setupPlayerInputs() {
+    const playerSetupDiv = document.getElementById("playerSetup");
+    const numPlayers = document.getElementById("numPlayers").value;
+    playerSetupDiv.innerHTML = "";
+
+    for (let i = 0; i < numPlayers; i++) {
+        playerSetupDiv.innerHTML += `
+            <div>
+                <label>Name: </label>
+                <input class="name-input" type="text" id="playerName${i}" value="Player ${i + 1}" />
+                <label>Color: </label>
+                <input type="color" id="playerColor${i}" value="#${Math.floor(Math.random()*16777215).toString(16)}" />
+            </div>
+        `;
+    }
+}
+
+// Start game after setup
+function startGame() {
+    const numPlayers = document.getElementById("numPlayers").value;
+
+    // Collect player names and colors
+    for (let i = 0; i < numPlayers; i++) {
+        const playerName = document.getElementById(`playerName${i}`).value;
+        const playerColor = document.getElementById(`playerColor${i}`).value;
+        players.push({ name: playerName, color: playerColor, score: 0 });
+    }
+
+    // Hide setup and show game
+    document.getElementById("setup").style.display = "none";
+    document.getElementById("game").style.display = "block";
+
+    updatePlayerIndicator();
+    createWheel();
+    startTurn();
+}
 
 function createWheel() {
     const wheelWidth = wheel.clientWidth;  // Dynamically get the current width of the wheel
@@ -66,7 +111,12 @@ function updateTimer() {
 function handleLetterClick(letterBox) {
     if (!letterBox.classList.contains("used")) {
         letterBox.classList.add("used");
-        endTurn();
+        players[currentPlayer].score++; // Increase score for the current player
+        if (currentLetterBoxes.every(box => box.classList.contains("used"))) {
+            endGame(); // End game if all letters are pressed
+        } else {
+            endTurn();
+        }
     }
 }
 
@@ -79,19 +129,47 @@ function endTurn() {
 
 // Update the corner gradients to indicate the current player
 function updatePlayerIndicator() {
-    const topLeft = document.getElementById("corner-top-left");
-    const topRight = document.getElementById("corner-top-right");
-    const bottomLeft = document.getElementById("corner-bottom-left");
-    const bottomRight = document.getElementById("corner-bottom-right");
-
-    const playerColor = players[currentPlayer];
-    topLeft.style.backgroundColor = playerColor;
-    topRight.style.backgroundColor = playerColor;
-    bottomLeft.style.backgroundColor = playerColor;
-    bottomRight.style.backgroundColor = playerColor;
+    const currentPlayerDisplay = document.getElementById("currentPlayer");
+    currentPlayerDisplay.innerHTML = `<span style="color: ${players[currentPlayer].color}">${players[currentPlayer].name}</span>`;
 }
 
-// Start the game
-updatePlayerIndicator();
-createWheel();  // Call the function to create the wheel with the letters
-startTurn();
+function endGame() {
+    clearInterval(interval);
+    
+    // Sort players by score in descending order
+    players.sort((a, b) => b.score - a.score);
+    
+    // Prepare the results text with colors
+    const resultsText = players.map(player => 
+        `<span style="color: ${player.color}; font-weight: bold">${player.name}: ${player.score}</span>`
+    ).join('<br>');
+    
+    // Display results in the results div
+    const resultsDiv = document.getElementById("results");
+    const resultsTextDiv = document.getElementById("resultsText");
+    
+    resultsTextDiv.innerHTML = resultsText; // Update the results text
+    resultsDiv.style.display = "block";      // Show the results div
+    
+    // Hide the game section
+    document.getElementById("game").style.display = "none";
+
+    // Add click event for the OK button to reset the game
+    document.getElementById("okButton").onclick = resetGame;
+}
+
+function resetGame() {
+    // Reset scores of each player
+    players.forEach(player => player.score = 0); // Reset scores to 0
+    currentPlayer = 0; // Reset current player index
+
+    // Reset letter boxes
+    currentLetterBoxes.forEach(box => box.classList.remove("used"));
+
+    // Hide results and show game section
+    document.getElementById("results").style.display = "none"; // Hide results div
+    document.getElementById("game").style.display = "block";   // Show game section
+
+    updatePlayerIndicator(); // Update player indicator
+    startTurn(); // Start the first player's turn
+}
