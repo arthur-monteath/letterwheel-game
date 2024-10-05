@@ -1,4 +1,78 @@
-
+const themes = [
+    "Países",
+    "Objetos",
+    "Elogios",
+    "Animais",
+    "Cores",
+    "Sentimentos",
+    "Alimentos",
+    "FLV (fruta, legume ou verdura)",
+    "FNDS (filme, novela, desenho animado, série)",
+    "MSE (minha sogra é...)",
+    "JLR (jornal, livro ou revista)",
+    "PCH (partes do corpo humano)",
+    "Nomes próprios",
+    "Profissões",
+    "Esportes",
+    "Times de futebol",
+    "Celebridades",
+    "Bandas",
+    "Instrumentos musicais",
+    "Personagens",
+    "Marcas famosas",
+    "Meios de transporte",
+    "Flores",
+    "Adjetivos",
+    "Gentílicos (adjetivos pátrios)",
+    "Verbos",
+    "Games",
+    "Super-heróis",
+    "App ou sites",
+    "Chamaria para um churrasco",
+    "Coisa de mãe",
+    "Representa o Brasil",
+    "Perrengue chique",
+    "Deveria ser crime",
+    "Pior presente de aniversário",
+    "Coisas estranhas que há na minha casa",
+    "Tem na geladeira",
+    "Tem na bolsa",
+    "Tem no banheiro",
+    "No meu casamento vai ter",
+    "Qual seria meu superpoder",
+    "Animais fantásticos",
+    "Lugares assombrados",
+    "O que não fazer em um primeiro encontro",
+    "O que me irrita",
+    "Antes de morrer quero...",
+    "Não me orgulho de...",
+    "Invenções malucas para facilitar a vida",
+    "O que fazer ao me encontrar com um alienígena",
+    "Medo de...",
+    "Manias estranhas",
+    "Música que acaba com qualquer festa",
+    "Piores modas que já adotei",
+    "Motivo para rir",
+    "Comidas exóticas",
+    "Hashtag inventada",
+    "Nome de um reality show",
+    "Minha banda se chama...",
+    "Apelido de casal",
+    "Nome de uma ilha deserta",
+    "Personagem de um desenho animado inexistente",
+    "Título para uma novela mexicana nova",
+    "Nome do meu livro",
+    "Termos científicos e técnicos",
+    "Autores de livros clássicos",
+    "Obras de arte famosas",
+    "Invenções modernas",
+    "Compositores",
+    "Nomes ou sobrenomes de Presidentes",
+    "Capitais dos países",
+    "Expressões ou ditados populares",
+    "Frutas ou objetos em inglês",
+    "Gírias novas ou antigas"
+];
 
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const wheel = document.getElementById("wheel");
@@ -9,6 +83,7 @@ let currentPlayer = 0;
 let players = []; // Array to store players' names and colors
 let currentLetterBoxes = [];
 let interval = null; // Store the interval globally to manage clearing
+let letterPressedThisRound = false;
 
 // Handle pre-game setup
 document.getElementById("numPlayers").addEventListener("change", setupPlayerInputs);
@@ -33,7 +108,6 @@ function setupPlayerInputs() {
     }
 }
 
-// Start game after setup
 function startGame() {
     const numPlayers = document.getElementById("numPlayers").value;
 
@@ -47,6 +121,10 @@ function startGame() {
     // Hide setup and show game
     document.getElementById("setup").style.display = "none";
     document.getElementById("game").style.display = "block";
+
+    // Randomly select a theme and display it
+    const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+    document.getElementById("themeDisplay").innerText = `Tema: ${randomTheme}`; // Display selected theme
 
     updatePlayerIndicator();
     createWheel();
@@ -112,10 +190,12 @@ function handleLetterClick(letterBox) {
     if (!letterBox.classList.contains("used")) {
         letterBox.classList.add("used");
         players[currentPlayer].score++; // Increase score for the current player
+        letterPressedThisRound = true;   // Mark that a letter has been pressed
+
         if (currentLetterBoxes.every(box => box.classList.contains("used"))) {
             endGame(); // End game if all letters are pressed
         } else {
-            endTurn();
+            endTurn(); // Continue to the next player's turn
         }
     }
 }
@@ -124,7 +204,15 @@ function handleLetterClick(letterBox) {
 function endTurn() {
     currentPlayer = (currentPlayer + 1) % players.length;
     updatePlayerIndicator();
-    startTurn(); // Start the next player's turn
+
+    // Check if all players have had their turn without pressing any letter
+    if (currentPlayer === 0 && !letterPressedThisRound) {
+        endGame(); // End the game if no letters were pressed
+    } else {
+        startTurn(); // Start the next player's turn
+    }
+
+    letterPressedThisRound = false; // Reset the tracker for the next round
 }
 
 // Update the corner gradients to indicate the current player
