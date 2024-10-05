@@ -180,16 +180,16 @@ function startTurn() {
         clearInterval(interval); // Clear the previous interval if it exists
     }
 
-    timeLeft = 5;
+    timeLeft = 8;
     updateTimer();
     interval = setInterval(() => {
-        timeLeft--;
+        timeLeft = (timeLeft - 0.1).toFixed(1);
         updateTimer();
         if (timeLeft <= 0) {
             clearInterval(interval);
             endTurn();
         }
-    }, 1000);
+    }, 100);
 }
 
 // Update timer display
@@ -223,11 +223,12 @@ function endTurn() {
         if(!letterPressedThisRound)
         {
             endGame();
+            return;
         }
         letterPressedThisRound = false;
-    } else {
-        startTurn(); // Start the next player's turn
     }
+
+    startTurn();
 }
 
 // Update the corner gradients to indicate the current player
