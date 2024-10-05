@@ -251,6 +251,9 @@ function resetGame() {
     players.forEach(player => player.score = 0); // Reset scores to 0
     currentPlayer = 0; // Reset current player index
 
+    const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+    document.getElementById("themeDisplay").innerText = `Tema: ${randomTheme}`;
+
     // Reset letter boxes
     currentLetterBoxes.forEach(box => box.classList.remove("used"));
 
